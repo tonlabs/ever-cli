@@ -120,6 +120,7 @@ impl TerminalBrowser {
                 self.client.clone(),
                 ParamsOfEncodeInternalMessage {
                     abi: Some(debot.abi.clone()),
+                    src_address: Some(format!("{}:{}", DEBOT_WC, interface_id)),
                     address: Some(debot_addr.to_owned()),
                     call_set,
                     value: "1000000000000000".to_owned(),
