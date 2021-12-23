@@ -14,6 +14,8 @@
 pub mod address_input;
 pub mod amount_input;
 pub mod confirm_input;
+pub mod country_input;
+pub mod datetime_input;
 pub mod dinterface;
 pub mod echo;
 pub mod menu;
@@ -27,6 +29,8 @@ pub mod userinfo;
 pub use address_input::AddressInput;
 pub use amount_input::AmountInput;
 pub use confirm_input::ConfirmInput;
+pub use country_input::CountryInput;
+pub use datetime_input::DateTimeInput;
 pub use menu::Menu;
 pub use number_input::NumberInput;
 pub use signing_box_input::SigningBoxInput;

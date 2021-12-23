@@ -284,6 +284,55 @@ fn test_terminal() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
+fn test_country_input() -> Result<(), Box<dyn std::error::Error>> {
+    let addr = deploy_debot("CountryInput")?;
+    
+    let mut cmd = Command::cargo_bin(BIN_NAME)?;
+    cmd.timeout(std::time::Duration::from_secs(2))
+        .write_stdin(format!("y\n{}\n{}", "RU", "ES"))
+        .arg("debot")
+        .arg("fetch")
+        .arg(&addr);
+    let _cmd = cmd
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Select a country:"))
+        .stdout(predicate::str::contains("These country codes are permitted: RU GB KZ"))
+        .stdout(predicate::str::contains("Country test for permitted list completed"))
+        .stdout(predicate::str::contains("Select a country:"))
+        .stdout(predicate::str::contains("These country codes are banned: RU GB KZ"))
+        .stdout(predicate::str::contains("Country test for banned list completed"));
+    Ok(())
+}
+
+#[test]
+fn test_datetime_input() -> Result<(), Box<dyn std::error::Error>> {
+    let addr = deploy_debot("DateTimeInput")?;
+    
+    let mut cmd = Command::cargo_bin(BIN_NAME)?;
+    cmd.timeout(std::time::Duration::from_secs(2))
+        .write_stdin(format!("y\n{}\n{}\n{}", "1234568800", "60000", "1234567890"))
+        .arg("debot")
+        .arg("fetch")
+        .arg(&addr);
+    let _cmd = cmd
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(""))
+        .stdout(predicate::str::contains(""))
+        .stdout(predicate::str::contains(""))
+        .stdout(predicate::str::contains(""))
+        .stdout(predicate::str::contains(""))
+        .stdout(predicate::str::contains(""))
+        .stdout(predicate::str::contains(""))
+        .stdout(predicate::str::contains(""))
+        .stdout(predicate::str::contains(""))
+        .stdout(predicate::str::contains(""))
+        .stdout(predicate::str::contains(""));
+    Ok(())
+}
+
+#[test]
 fn test_pipechain_signing() -> Result<(), Box<dyn std::error::Error>> {
     let path_to_pipechain = "tests/PipechainTest2.chain";
     let addr = deploy_debot("PipechainTest")?;

@@ -1,8 +1,8 @@
 use super::echo::Echo;
 use super::stdout::Stdout;
 use super::{
-    AddressInput, AmountInput, ConfirmInput, Menu, NumberInput, SigningBoxInput, 
-    EncryptionBoxInput, Terminal, UserInfo, InputInterface
+    AddressInput, AmountInput, ConfirmInput, CountryInput, DateTimeInput, Menu, NumberInput,
+    SigningBoxInput, EncryptionBoxInput, Terminal, UserInfo, InputInterface
 };
 use crate::config::Config;
 use crate::debot::ChainProcessor;
@@ -61,6 +61,12 @@ impl SupportedInterfaces {
         interfaces.insert(iface.get_id(), iface);
 
         let iface: Arc<dyn DebotInterface + Send + Sync> = iw.wrap(Arc::new(ConfirmInput::new()));
+        interfaces.insert(iface.get_id(), iface);
+
+        let iface: Arc<dyn DebotInterface + Send + Sync> = iw.wrap(Arc::new(CountryInput::new()));
+        interfaces.insert(iface.get_id(), iface);
+
+        let iface: Arc<dyn DebotInterface + Send + Sync> = iw.wrap(Arc::new(DateTimeInput::new()));
         interfaces.insert(iface.get_id(), iface);
 
         let iface: Arc<dyn DebotInterface + Send + Sync> = Arc::new(Stdout::new());
@@ -165,6 +171,18 @@ where
     let mut strings = vec![];
     for elem in array {
         strings.push(validator(&elem).ok_or(format!("invalid array element type"))?);
+    }
+    Ok(strings)
+}
+
+pub fn decode_array_strings(args: &Value, name: &str) -> Result<Vec<String>, String> {
+    let array = args[name]
+        .as_array()
+        .ok_or(format!("\"{}\" is invalid: must be array", name))?;
+    let mut strings = vec![];
+    for elem in array {
+        let string = elem.as_str().ok_or_else(|| format!("array element is invalid: must be string"))?;
+        strings.push(string.to_owned());
     }
     Ok(strings)
 }
