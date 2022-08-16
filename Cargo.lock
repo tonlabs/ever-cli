@@ -50,6 +50,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "android_system_properties"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d7ed72e1635e121ca3e79420540282af22da58be50de153d36f81ddc6b83aa9e"
+dependencies = [
+ "libc",
+]
+
+[[package]]
 name = "ansi_term"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -60,14 +69,14 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.59"
+version = "1.0.61"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c91f1f46651137be86f3a2b9a8359f9ab421d04d941c62b5982e1ca21113adf9"
+checksum = "508b352bb5c066aac251f6daf6b36eccd03e8a88e8081cd44959ea277a3af9a8"
 
 [[package]]
 name = "api_derive"
-version = "1.36.1"
-source = "git+https://github.com/tonlabs/TON-SDK.git?tag=1.36.1#a31005687020529404aef77dad86198e2118c802"
+version = "1.37.0"
+source = "git+https://github.com/tonlabs/TON-SDK.git?branch=master-RC#d521686fbe6d5804e826bafedd76bbe0367cc952"
 dependencies = [
  "api_info",
  "quote",
@@ -77,8 +86,8 @@ dependencies = [
 
 [[package]]
 name = "api_info"
-version = "1.36.1"
-source = "git+https://github.com/tonlabs/TON-SDK.git?tag=1.36.1#a31005687020529404aef77dad86198e2118c802"
+version = "1.37.0"
+source = "git+https://github.com/tonlabs/TON-SDK.git?branch=master-RC#d521686fbe6d5804e826bafedd76bbe0367cc952"
 dependencies = [
  "serde",
  "serde_derive",
@@ -318,14 +327,16 @@ checksum = "17cc5e6b5ab06331c33589842070416baa137e8b0eb912b008cfd4a78ada7919"
 
 [[package]]
 name = "chrono"
-version = "0.4.19"
+version = "0.4.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "670ad68c9088c2a963aaa298cb369688cf3f9465ce5e2d4ca10e6e0098a1ce73"
+checksum = "bfd4d1b31faaa3a89d7934dbded3111da0d2ef28e3ebccdb4f0179f5929d1ef1"
 dependencies = [
- "libc",
+ "iana-time-zone",
+ "js-sys",
  "num-integer",
  "num-traits",
  "time",
+ "wasm-bindgen",
  "winapi",
 ]
 
@@ -517,6 +528,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6184e33543162437515c2e2b48714794e37845ec9851711914eec9d308f6ebe8"
 
 [[package]]
+name = "diffy"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c27ec7cef89a63c063e06570bb861b7d35e406d6885551b346d77c459b34d3db"
+dependencies = [
+ "ansi_term",
+]
+
+[[package]]
 name = "digest"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -680,9 +700,9 @@ dependencies = [
 
 [[package]]
 name = "futures"
-version = "0.3.21"
+version = "0.3.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f73fe65f54d1e12b726f517d3e2135ca3125a437b6d998caf1962961f7172d9e"
+checksum = "ab30e97ab6aacfe635fad58f22c2bb06c8b685f7421eb1e064a729e2a5f481fa"
 dependencies = [
  "futures-channel",
  "futures-core",
@@ -695,9 +715,9 @@ dependencies = [
 
 [[package]]
 name = "futures-channel"
-version = "0.3.21"
+version = "0.3.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c3083ce4b914124575708913bca19bfe887522d6e2e6d0952943f5eac4a74010"
+checksum = "2bfc52cbddcfd745bf1740338492bb0bd83d76c67b445f91c5fb29fae29ecaa1"
 dependencies = [
  "futures-core",
  "futures-sink",
@@ -705,15 +725,15 @@ dependencies = [
 
 [[package]]
 name = "futures-core"
-version = "0.3.21"
+version = "0.3.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0c09fd04b7e4073ac7156a9539b57a484a8ea920f79c7c675d05d289ab6110d3"
+checksum = "d2acedae88d38235936c3922476b10fced7b2b68136f5e3c03c2d5be348a1115"
 
 [[package]]
 name = "futures-executor"
-version = "0.3.21"
+version = "0.3.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9420b90cfa29e327d0429f19be13e7ddb68fa1cccb09d65e5706b8c7a749b8a6"
+checksum = "1d11aa21b5b587a64682c0094c2bdd4df0076c5324961a40cc3abd7f37930528"
 dependencies = [
  "futures-core",
  "futures-task",
@@ -722,15 +742,15 @@ dependencies = [
 
 [[package]]
 name = "futures-io"
-version = "0.3.21"
+version = "0.3.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fc4045962a5a5e935ee2fdedaa4e08284547402885ab326734432bed5d12966b"
+checksum = "93a66fc6d035a26a3ae255a6d2bca35eda63ae4c5512bef54449113f7a1228e5"
 
 [[package]]
 name = "futures-macro"
-version = "0.3.21"
+version = "0.3.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "33c1e13800337f4d4d7a316bf45a567dbcb6ffe087f16424852d97e97a91f512"
+checksum = "0db9cce532b0eae2ccf2766ab246f114b56b9cf6d445e00c2549fbc100ca045d"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -739,21 +759,21 @@ dependencies = [
 
 [[package]]
 name = "futures-sink"
-version = "0.3.21"
+version = "0.3.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "21163e139fa306126e6eedaf49ecdb4588f939600f0b1e770f4205ee4b7fa868"
+checksum = "ca0bae1fe9752cf7fd9b0064c674ae63f97b37bc714d745cbde0afb7ec4e6765"
 
 [[package]]
 name = "futures-task"
-version = "0.3.21"
+version = "0.3.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "57c66a976bf5909d801bbef33416c41372779507e7a6b3a5e25e4749c58f776a"
+checksum = "842fc63b931f4056a24d59de13fb1272134ce261816e063e634ad0c15cdc5306"
 
 [[package]]
 name = "futures-util"
-version = "0.3.21"
+version = "0.3.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d8b7abd5d659d9b90c8cba917f6ec750a74e2dc23902ef9cd4cc8c8b22e6036a"
+checksum = "f0828a5471e340229c11c77ca80017937ce3c58cb788a17e5f1c2d5c485a9577"
 dependencies = [
  "futures-channel",
  "futures-core",
@@ -984,6 +1004,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "iana-time-zone"
+version = "0.1.45"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ef5528d9c2817db4e10cc78f8d4c8228906e5854f389ff6b076cee3572a09d35"
+dependencies = [
+ "android_system_properties",
+ "core-foundation-sys",
+ "js-sys",
+ "wasm-bindgen",
+ "winapi",
+]
+
+[[package]]
 name = "idna"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1078,9 +1111,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.126"
+version = "0.2.131"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "349d5a591cd28b49e1d1037471617a32ddcda5731b99419008085f72d5a53836"
+checksum = "04c3b4822ccebfa39c02fc03d1534441b22ead323fa0f48bb7ddd8e6ba076a40"
 
 [[package]]
 name = "libsecp256k1"
@@ -1343,9 +1376,9 @@ dependencies = [
 
 [[package]]
 name = "once_cell"
-version = "1.13.0"
+version = "1.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "18a6dbe30758c9f83eb00cbea4ac95966305f5a7772f3f42ebfc7fc7eddbd8e1"
+checksum = "074864da206b4973b84eb91683020dbefd6a8c3f0f38e054d93954e891935e4e"
 
 [[package]]
 name = "opaque-debug"
@@ -1468,18 +1501,18 @@ checksum = "d4fd5641d01c8f18a23da7b6fe29298ff4b55afcccdf78973b24cf3175fee32e"
 
 [[package]]
 name = "pin-project"
-version = "1.0.11"
+version = "1.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "78203e83c48cffbe01e4a2d35d566ca4de445d79a85372fc64e378bfc812a260"
+checksum = "ad29a609b6bcd67fee905812e544992d216af9d755757c05ed2d0e15a74c6ecc"
 dependencies = [
  "pin-project-internal",
 ]
 
 [[package]]
 name = "pin-project-internal"
-version = "1.0.11"
+version = "1.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "710faf75e1b33345361201d36d04e98ac1ed8909151a017ed384700836104c74"
+checksum = "069bdb1e05adc7a8990dce9cc75370895fbe4e3d58b9b73bf1aee56359344a55"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1831,18 +1864,18 @@ dependencies = [
 
 [[package]]
 name = "serde"
-version = "1.0.142"
+version = "1.0.143"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e590c437916fb6b221e1d00df6e3294f3fccd70ca7e92541c475d6ed6ef5fee2"
+checksum = "53e8e5d5b70924f74ff5c6d64d9a5acd91422117c60f48c4e07855238a254553"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.142"
+version = "1.0.143"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "34b5b8d809babe02f538c2cfec6f2c1ed10804c0e5a6a041a049a4f5588ccc2e"
+checksum = "d3d8e8de557aee63c26b85b947f5e59b690d0454c753f3adeb5cd7835ab88391"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1963,9 +1996,15 @@ dependencies = [
 
 [[package]]
 name = "signature"
-version = "1.5.0"
+version = "1.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f054c6c1a6e95179d6f23ed974060dcefb2d9388bb7256900badad682c499de4"
+checksum = "f0ea32af43239f0d353a7dd75a22d94c329c8cdaafdcb4c1c1335aa10c298a4a"
+
+[[package]]
+name = "similar"
+version = "2.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "62ac7f900db32bf3fd12e0117dd3dc4da74bc52ebaac97f39668446d89694803"
 
 [[package]]
 name = "simplelog"
@@ -2260,8 +2299,8 @@ dependencies = [
 
 [[package]]
 name = "ton_abi"
-version = "2.3.1"
-source = "git+https://github.com/tonlabs/ton-labs-abi.git?tag=2.3.1#cb442bca8244a6bfd316c96c2fc0a99114ab32c3"
+version = "2.3.7"
+source = "git+https://github.com/tonlabs/ton-labs-abi.git?tag=2.3.7#958fba895b3a7c4f255d89a0f292e2136350022c"
 dependencies = [
  "base64 0.10.1",
  "byteorder",
@@ -2282,8 +2321,8 @@ dependencies = [
 
 [[package]]
 name = "ton_api"
-version = "0.2.129"
-source = "git+https://github.com/tonlabs/ton-labs-tl.git?tag=0.2.129#404e7b9f219fc20b04b773a9a3f3a481ed03a0bf"
+version = "0.2.131"
+source = "git+https://github.com/tonlabs/ton-labs-tl.git?tag=0.2.131#f723789f6e48facdb53898c31f5c8ed2dda2df00"
 dependencies = [
  "byteorder",
  "extfmt",
@@ -2302,8 +2341,8 @@ dependencies = [
 
 [[package]]
 name = "ton_block"
-version = "1.8.0"
-source = "git+https://github.com/tonlabs/ton-labs-block.git?tag=1.8.0#403010107636ec9cb2bcc75d09b75147c72b0d82"
+version = "1.8.3"
+source = "git+https://github.com/tonlabs/ton-labs-block.git?tag=1.8.3#8f39a1b467919d5fb3129800f07357883be82d77"
 dependencies = [
  "base64 0.13.0",
  "crc 3.0.0",
@@ -2320,8 +2359,8 @@ dependencies = [
 
 [[package]]
 name = "ton_block_json"
-version = "0.7.24"
-source = "git+https://github.com/tonlabs/ton-labs-block-json.git?tag=0.7.24#9bdcf709fc1f65756a4aa38ed5ab7889e03e2568"
+version = "0.7.31"
+source = "git+https://github.com/tonlabs/ton-labs-block-json.git?tag=0.7.31#21e6c2d234672d3f2f12d72eaadfa571b44558fb"
 dependencies = [
  "base64 0.13.0",
  "failure",
@@ -2338,8 +2377,8 @@ dependencies = [
 
 [[package]]
 name = "ton_client"
-version = "1.36.1"
-source = "git+https://github.com/tonlabs/TON-SDK.git?tag=1.36.1#a31005687020529404aef77dad86198e2118c802"
+version = "1.37.0"
+source = "git+https://github.com/tonlabs/TON-SDK.git?branch=master-RC#d521686fbe6d5804e826bafedd76bbe0367cc952"
 dependencies = [
  "aes",
  "api_derive",
@@ -2395,8 +2434,8 @@ dependencies = [
 
 [[package]]
 name = "ton_executor"
-version = "1.15.78"
-source = "git+https://github.com/tonlabs/ton-labs-executor.git?tag=1.15.78#abf3bcdce6194134fe00080303355dda78391c73"
+version = "1.15.86"
+source = "git+https://github.com/tonlabs/ton-labs-executor.git?tag=1.15.86#2be2ba8c980bfd4a4a20a421e92924d5b0693bcb"
 dependencies = [
  "failure",
  "lazy_static",
@@ -2408,8 +2447,8 @@ dependencies = [
 
 [[package]]
 name = "ton_labs_assembler"
-version = "1.2.44"
-source = "git+https://github.com/tonlabs/ton-labs-assembler.git?tag=1.2.44#028be2e35b8b39c73a60ab386384ea6ff62eb219"
+version = "1.2.47"
+source = "git+https://github.com/tonlabs/ton-labs-assembler.git?tag=1.2.47#4f0e7e2bf848fc74604f895fca3e7b9400b9494a"
 dependencies = [
  "failure",
  "hex 0.4.3",
@@ -2423,8 +2462,8 @@ dependencies = [
 
 [[package]]
 name = "ton_sdk"
-version = "1.36.1"
-source = "git+https://github.com/tonlabs/TON-SDK.git?tag=1.36.1#a31005687020529404aef77dad86198e2118c802"
+version = "1.37.0"
+source = "git+https://github.com/tonlabs/TON-SDK.git?branch=master-RC#d521686fbe6d5804e826bafedd76bbe0367cc952"
 dependencies = [
  "api_derive",
  "api_info",
@@ -2450,7 +2489,7 @@ dependencies = [
 [[package]]
 name = "ton_tl_codegen"
 version = "0.0.2"
-source = "git+https://github.com/tonlabs/ton-labs-tl.git?tag=0.2.129#404e7b9f219fc20b04b773a9a3f3a481ed03a0bf"
+source = "git+https://github.com/tonlabs/ton-labs-tl.git?tag=0.2.131#f723789f6e48facdb53898c31f5c8ed2dda2df00"
 dependencies = [
  "crc 1.8.1",
  "failure",
@@ -2464,8 +2503,8 @@ dependencies = [
 
 [[package]]
 name = "ton_types"
-version = "1.11.3"
-source = "git+https://github.com/tonlabs/ton-labs-types.git?tag=1.11.3#d62ead62339f17fda171fe45f19f5c7452e724bb"
+version = "1.11.4"
+source = "git+https://github.com/tonlabs/ton-labs-types.git?tag=1.11.4#fd69a6b848ddfacee86cc6b76c3ff36d61f3e1f7"
 dependencies = [
  "base64 0.13.0",
  "crc 1.8.1",
@@ -2484,9 +2523,10 @@ dependencies = [
 
 [[package]]
 name = "ton_vm"
-version = "1.8.40"
-source = "git+https://github.com/tonlabs/ton-labs-vm.git?tag=1.8.40#3bd45a44c3ca454e4f16f2de06994b404500cce2"
+version = "1.8.43"
+source = "git+https://github.com/tonlabs/ton-labs-vm.git?tag=1.8.43#7aa03d20e32af14baeb0aae0babf4b9281453561"
 dependencies = [
+ "diffy",
  "ed25519",
  "ed25519-dalek",
  "failure",
@@ -2497,13 +2537,15 @@ dependencies = [
  "num-traits",
  "rand 0.7.3",
  "sha2 0.9.9",
+ "similar",
  "ton_block",
  "ton_types",
+ "zstd",
 ]
 
 [[package]]
 name = "tonos-cli"
-version = "0.27.26"
+version = "0.27.30"
 dependencies = [
  "assert_cmd",
  "async-trait",
@@ -2889,18 +2931,18 @@ dependencies = [
 
 [[package]]
 name = "zstd"
-version = "0.8.3+zstd.1.5.0"
+version = "0.11.2+zstd.1.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ea7094c7b4a58fbd738eb0d4a2fc7684a0e6949a31597e074ffe20a07cbc2bf"
+checksum = "20cc960326ece64f010d2d2107537f26dc589a6573a316bd5b1dba685fa5fde4"
 dependencies = [
  "zstd-safe",
 ]
 
 [[package]]
 name = "zstd-safe"
-version = "4.1.0+zstd.1.5.0"
+version = "5.0.2+zstd.1.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d30375f78e185ca4c91930f42ea2c0162f9aa29737032501f93b79266d985ae7"
+checksum = "1d2a5585e04f9eea4b2a3d1eca508c4dee9592a89ef6f450c11719da0726f4db"
 dependencies = [
  "libc",
  "zstd-sys",
@@ -2908,9 +2950,9 @@ dependencies = [
 
 [[package]]
 name = "zstd-sys"
-version = "1.6.0+zstd.1.5.0"
+version = "2.0.1+zstd.1.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2141bed8922b427761470e6bbfeff255da94fa20b0bbeab0d9297fcaf71e3aa7"
+checksum = "9fd07cbbc53846d9145dbffdf6dd09a7a0aa52be46741825f5c97bdd4f73f12b"
 dependencies = [
  "cc",
  "libc",
