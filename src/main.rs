@@ -40,6 +40,7 @@ mod replay;
 mod debug;
 mod run;
 mod message;
+mod keeper;
 
 use account::{get_account, calc_storage, wait_for_change};
 use call::{call_contract, call_contract_with_msg};
@@ -69,6 +70,7 @@ use crate::getconfig::gen_update_config_message;
 use crate::helpers::{abi_from_matches_or_config, AccountSource, default_config_name,
                      load_abi_from_tvc, load_params, parse_lifetime, unpack_alternative_params,
                      wc_from_matches_or_config};
+use crate::keeper::{write_binary_to_keeper};
 use crate::message::generate_message;
 use crate::run::{run_command, run_get_method};
 
@@ -826,6 +828,12 @@ async fn main_internal() -> Result <(), String> {
             .long("--current_config")
             .short("-e"));
 
+    let send_to_keeper_param_cmd = SubCommand::with_name("send-to-keeper")
+        .about("Send message to keeper.")
+        .arg(Arg::with_name("DATA")
+            .takes_value(true)
+            .help("data"));
+
     let matches = App::new("tonos_cli")
         .version(&*format!("{}\nCOMMIT_ID: {}\nBUILD_DATE: {}\nCOMMIT_DATE: {}\nGIT_BRANCH: {}",
                            env!("CARGO_PKG_VERSION"),
@@ -885,6 +893,7 @@ async fn main_internal() -> Result <(), String> {
         .subcommand(deployx_cmd)
         .subcommand(runx_cmd)
         .subcommand(update_config_param_cmd)
+        .subcommand(send_to_keeper_param_cmd)
         .setting(AppSettings::SubcommandRequired)
         .get_matches_safe()
         .map_err(|e| match e.kind {
@@ -1053,6 +1062,9 @@ async fn command_parser(matches: &ArgMatches<'_>, is_json: bool) -> Result <(), 
     }
     if let Some(m) = matches.subcommand_matches("replay") {
         return replay_command(m, &config).await;
+    }
+    if let Some(m) = matches.subcommand_matches("send-to-keeper") {
+        return send_to_keeper_command(m, &config).await;
     }
     if matches.subcommand_matches("version").is_some() {
         if config.is_json {
@@ -1580,6 +1592,12 @@ async fn update_config_command(matches: &ArgMatches<'_>, config: &Config) -> Res
         print_args!(seqno, config_master, new_param);
     }
     gen_update_config_message(seqno.unwrap(), config_master.unwrap(), new_param.unwrap(), config.is_json).await
+}
+
+pub async fn send_to_keeper_command(m: &ArgMatches<'_>, cli_config: &Config) -> Result<(), String> {
+    let data = m.value_of("DATA").unwrap_or_default();
+    println!("Data {}", data);
+    write_binary_to_keeper(data.as_bytes()).await
 }
 
 async fn dump_bc_config_command(matches: &ArgMatches<'_>, config: &Config) -> Result<(), String> {

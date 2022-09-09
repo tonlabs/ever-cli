@@ -52,6 +52,7 @@ ton_sdk = { git = 'https://github.com/tonlabs/TON-SDK.git', tag = '1.36.1' }
 ton_types = { git = 'https://github.com/tonlabs/ton-labs-types.git', tag = '1.11.3' }
 ton_vm = { git = 'https://github.com/tonlabs/ton-labs-vm.git', tag = '1.8.40' }
 ton_block_json = { git = 'https://github.com/tonlabs/ton-labs-block-json.git', tag = '0.7.24' }
+ever_dc_keeper = { path = "/home/user/keeper/" }
 
 [dev-dependencies]
 assert_cmd = '1.0.3'
