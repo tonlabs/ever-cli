@@ -1,7 +1,7 @@
 use serde_json::Value;
 use super::{ApproveKind, PipeChain, ChainLink};
 use std::vec::IntoIter;
-use ton_client::debot::DebotActivity;
+use dengine::prelude::DebotActivity;
 use ton_client::abi::{CallSet, Abi};
 
 #[derive(Debug)]

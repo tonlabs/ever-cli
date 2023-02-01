@@ -2,7 +2,7 @@ use super::dinterface::{decode_answer_id, decode_bool_arg, decode_prompt, decode
 use crate::debot::term_browser::terminal_input;
 use serde_json::{Value, json};
 use ton_client::abi::Abi;
-use ton_client::debot::{DebotInterface, InterfaceResult};
+use dengine::prelude::{DebotInterface, InterfaceResult};
 use crate::convert::convert_token;
 use ton_client::encoding::decode_abi_bigint;
 use std::io::{Read};

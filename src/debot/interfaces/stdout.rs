@@ -1,5 +1,5 @@
 use serde_json::{Value, json};
-use ton_client::debot::{DebotInterface, InterfaceResult};
+use dengine::prelude::{DebotInterface, InterfaceResult};
 use ton_client::abi::Abi;
 
 const STDOUT_ID: &str = "c91dcc3fddb30485a3a07eb7c1e5e2aceaf75f4bc2678111de1f25291cdda80b";

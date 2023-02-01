@@ -1,5 +1,5 @@
 use serde_json::{Value, json};
-use ton_client::debot::{DebotInterface, InterfaceResult};
+use dengine::prelude::{DebotInterface, InterfaceResult};
 use ton_client::abi::Abi;
 
 const ECHO_ID: &str = "f6927c0d4bdb69e1b52d27f018d156ff04152f00558042ff674f0fec32e4369d";

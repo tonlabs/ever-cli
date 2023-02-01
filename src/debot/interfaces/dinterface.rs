@@ -14,7 +14,7 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
-use ton_client::debot::{DebotInterface, DebotInterfaceExecutor};
+use dengine::prelude::{DebotInterface, DebotInterfaceExecutor};
 use ton_client::encoding::{decode_abi_bigint, decode_abi_number};
 
 pub struct SupportedInterfaces {

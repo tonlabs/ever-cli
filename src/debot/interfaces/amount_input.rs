@@ -1,7 +1,7 @@
 use crate::debot::term_browser::terminal_input;
 use serde_json::{Value, json};
 use ton_client::abi::Abi;
-use ton_client::debot::{DebotInterface, InterfaceResult};
+use dengine::prelude::{DebotInterface, InterfaceResult};
 use super::dinterface::{decode_answer_id, decode_num_arg, decode_prompt};
 use ton_client::encoding::decode_abi_number;
 use crate::convert;

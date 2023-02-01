@@ -19,7 +19,7 @@ use std::collections::VecDeque;
 use std::io;
 use std::sync::{Arc, RwLock};
 use ton_client::crypto::SigningBoxHandle;
-use ton_client::debot::{BrowserCallbacks, DAction, DebotActivity, STATE_EXIT};
+use dengine::prelude::*;
 use ton_client::error::ClientResult;
 
 #[derive(Default)]

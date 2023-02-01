@@ -57,6 +57,7 @@ ton_sdk = { git = 'https://github.com/tonlabs/TON-SDK.git', tag = '1.40.0' }
 ton_types = { git = 'https://github.com/tonlabs/ton-labs-types.git', tag = '1.12.6' }
 ton_vm = { git = 'https://github.com/tonlabs/ton-labs-vm.git', tag = '1.8.96' }
 sold = { git = 'https://github.com/tonlabs/TON-Solidity-Compiler.git', tag = '0.66.0', optional = true }
+dengine = {path = '../../surf/private-dengine'}
 
 [dev-dependencies]
 assert_cmd = '2.0'

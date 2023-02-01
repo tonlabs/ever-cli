@@ -3,7 +3,7 @@ use crate::debot::term_browser::{action_input};
 use serde_json::{Value, json};
 use serde::{de, Deserialize, Deserializer};
 use ton_client::abi::Abi;
-use ton_client::debot::{DebotInterface, InterfaceResult};
+use dengine::prelude::{DebotInterface, InterfaceResult};
 use ton_client::encoding::decode_abi_number;
 
 pub(super) const ID: &str = "ac1a4d3ecea232e49783df4a23a81823cdca3205dc58cd20c4db259c25605b48";
