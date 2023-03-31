@@ -540,6 +540,7 @@ async fn replay_transaction_command(matches: &ArgMatches<'_>, config: &Config) -
     ).map_err(|e| format!("Failed to set logger: {}", e))?;
 
     let result_trans = execute_debug(
+        Some(matches),
         get_blockchain_config(config, config_path).await?,
         &mut account,
         msg.as_ref(),
@@ -693,6 +694,7 @@ async fn debug_call_command(matches: &ArgMatches<'_>, full_config: &FullConfig, 
     ).map_err(|e| format!("Failed to set logger: {}", e))?;
 
     let trans = execute_debug(
+        Some(matches),
         get_blockchain_config(&full_config.config, matches.value_of("CONFIG_PATH")).await?,
         &mut acc_root,
         Some(&message),
@@ -792,6 +794,7 @@ async fn debug_message_command(matches: &ArgMatches<'_>, config: &Config) -> Res
 
     let now = parse_now(matches)?;
     let trans = execute_debug(
+        Some(matches),
         get_blockchain_config(config, matches.value_of("CONFIG_PATH")).await?,
         &mut acc_root,
         Some(&message),
@@ -900,6 +903,7 @@ async fn debug_deploy_command(matches: &ArgMatches<'_>, config: &Config) -> Resu
     let now = parse_now(matches)?;
 
     let trans = execute_debug(
+        Some(matches),
         get_blockchain_config(config, matches.value_of("CONFIG_PATH")).await?,
         &mut acc_root,
         Some(&message),
@@ -1046,6 +1050,7 @@ fn choose_transaction(transactions: Vec<TrDetails>) -> Result<String, String> {
 }
 
 pub async fn execute_debug(
+    matches: Option<&ArgMatches<'_>>,
     bc_config: BlockchainConfig,
     account: &mut Cell,
     message: Option<&Message>,
@@ -1077,7 +1082,7 @@ pub async fn execute_debug(
     } else {
         bc_config
     };
-    
+
     let executor = Box::new(
         OrdinaryTransactionExecutor::new(
             bc_config.clone(),
@@ -1090,7 +1095,7 @@ pub async fn execute_debug(
         last_tr_lt: Arc::new(AtomicU64::new(last_tr_lt)),
         seed_block: UInt256::default(),
         debug: true,
-        trace_callback: generate_callback(None, tonos_config),
+        trace_callback: generate_callback(matches, tonos_config),
         ..ExecuteParams::default()
     };
 

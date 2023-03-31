@@ -168,6 +168,7 @@ async fn run(
         let message = Message::construct_from_base64(&msg.message)
             .map_err(|e| format!("failed to construct message: {}", e))?;
         match execute_debug(
+            Some(matches),
             get_blockchain_config(config, None).await?,
             &mut account,
             Some(&message),
