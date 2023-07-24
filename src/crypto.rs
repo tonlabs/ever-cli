@@ -10,7 +10,8 @@
  * See the License for the specific TON DEV software governing permissions and
  * limitations under the License.
  */
-use crate::helpers::{create_client_local, read_keys, WORD_COUNT, HD_PATH, check_dir};
+use crate::config::{WORD_COUNT, HD_PATH};
+use crate::helpers::{create_client_local, read_keys, check_dir};
 use ton_client::crypto::{
     KeyPair,
     mnemonic_from_random,

@@ -518,8 +518,7 @@ pub async fn dump_blockchain_config(config: &Config, path: &str) -> Result<(), S
             block_boc: block,
             ..Default::default()
         },
-    ).await
-        .map_err(|e| format!("Failed to get blockchain config: {}", e))?;
+    ).map_err(|e| format!("Failed to get blockchain config: {}", e))?;
 
     let bc_config = base64::decode(&bc_config.config_boc)
         .map_err(|e| format!("Failed to decode BOC: {}", e))?;

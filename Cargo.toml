@@ -16,7 +16,7 @@ license = 'Apache-2.0'
 name = 'tonos-cli'
 readme = 'README.md'
 repository = 'https://github.com/tonlabs/tonos-cli'
-version = '0.35.4'
+version = '0.35.5'
 default-run = 'tonos-cli'
 
 [features]
@@ -48,16 +48,18 @@ log = { features = [ 'std' ], version = '0.4' }
 serde = { features = [ 'derive' ], version = '1.0' }
 tokio = { default-features = false, features = [ 'full' ], version = '1.21' }
 url = '2.3.1'
-ton_abi = { git = 'https://github.com/tonlabs/ever-abi.git', tag = '2.3.73' }
-ton_block = { git = 'https://github.com/tonlabs/ever-block.git', tag = '1.9.37' }
-ton_block_json = { git = 'https://github.com/tonlabs/ever-block-json.git', tag = '0.7.105' }
-ton_client = { git = 'https://github.com/tonlabs/ever-sdk.git', tag = '1.42.1' }
-ton_executor = { git = 'https://github.com/tonlabs/ever-executor.git', tag = '1.15.185' }
-ton_labs_assembler = { git = 'https://github.com/tonlabs/ever-assembler.git', tag = '1.2.88' }
-ton_sdk = { git = 'https://github.com/tonlabs/ever-sdk.git', tag = '1.42.1' }
-ton_types = { git = 'https://github.com/tonlabs/ever-types.git', tag = '1.12.7' }
-ton_vm = { git = 'https://github.com/tonlabs/ever-vm.git', tag = '1.8.125' }
-sold = { git = 'https://github.com/tonlabs/TON-Solidity-Compiler.git', tag = '0.66.0', optional = true }
+ton_abi = { git = 'https://github.com/tonlabs/ever-abi.git', tag = '2.3.126' }
+ton_block = { features = ["fast_finality"], git = 'https://github.com/tonlabs/ever-block.git', tag = '1.9.84' }
+ton_block_json = { git = 'https://github.com/tonlabs/ever-block-json.git', tag = '0.7.163' }
+ton_client = { git = 'https://github.com/tonlabs/ever-sdk.git', tag = '1.44.0' }
+ton_executor = { features = ['signature_with_id'], git = 'https://github.com/tonlabs/ever-executor.git', tag = '1.16.53' }
+ton_labs_assembler = { git = 'https://github.com/tonlabs/ever-assembler.git', tag = '1.2.126' }
+ton_sdk = { git = 'https://github.com/tonlabs/ever-sdk.git', tag = '1.44.0' }
+ton_types = { git = 'https://github.com/tonlabs/ever-types.git', tag = '2.0.15' }
+ton_vm = { features = ['signature_with_id', 'signature_no_check'], git = 'https://github.com/tonlabs/ever-vm.git', tag = '1.8.184' }
+sold = { git = 'https://github.com/tonlabs/TON-Solidity-Compiler.git', branch = 'master', optional = true }
+dlopen = "0.1.6"
+dlopen_derive = "0.1.3"
 
 [dev-dependencies]
 assert_cmd = '2.0'
@@ -73,27 +75,7 @@ path = "src/main.rs"
 name = "__tonos-cli_completion"
 path = "src/completion.rs"
 
-#[patch.'https://github.com/tonlabs/ton-labs-abi.git']
-#ton_abi = { git = 'https://github.com/tonlabs/ever-abi.git', tag = '2.3.65' }
-#
-#[patch.'https://github.com/tonlabs/ton-labs-block.git']
-#ton_block = { git = 'https://github.com/tonlabs/ever-block.git', tag = '1.9.18' }
-#
-#[patch.'https://github.com/tonlabs/ton-labs-block-json.git']
-#ton_block_json = { git = 'https://github.com/tonlabs/ever-block-json.git', tag = '0.7.95' }
-#
-#[patch.'https://github.com/tonlabs/TON-SDK.git']
-#ton_client = { git = 'https://github.com/tonlabs/ever-sdk.git', tag = '1.41.1' }
-#ton_sdk = { git = 'https://github.com/tonlabs/ever-sdk.git', tag = '1.41.1' }
-#
-#[patch.'https://github.com/tonlabs/ton-labs-executor.git']
-#ton_executor = { git = 'https://github.com/tonlabs/ever-executor.git', tag = '1.15.173' }
-#
-#[patch.'https://github.com/tonlabs/ton-labs-assembler.git']
-#ton_labs_assembler = { git = 'https://github.com/tonlabs/ever-assembler.git', tag = '1.2.77' }
-#
-#[patch.'https://github.com/tonlabs/ton-labs-types.git']
-#ton_types = { git = 'https://github.com/tonlabs/ever-types.git', tag = '1.12.7' }
-#
-#[patch.'https://github.com/tonlabs/ton-labs-vm.git']
-#ton_vm = { git = 'https://github.com/tonlabs/ever-vm.git', tag = '1.8.114' }
+[lib]
+crate-type = ["dylib", "rlib"]
+path = "src/lib.rs"
+

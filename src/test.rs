@@ -23,7 +23,6 @@ use clap::{App, Arg, ArgMatches, SubCommand};
 use ed25519_dalek::Signer;
 use serde_json::json;
 use std::path::PathBuf;
-use std::sync::Arc;
 use ton_block::{
     Account, ConfigParams, CurrencyCollection, Deserializable, Message, Serializable, TickTock,
 };
@@ -31,7 +30,7 @@ use ton_client::abi::{
     encode_internal_message, encode_message, CallSet, DeploySet, FunctionHeader,
     ParamsOfEncodeInternalMessage, ParamsOfEncodeMessage, Signer as AbiSigner,
 };
-use ton_types::{deserialize_tree_of_cells_inmem, serialize_toc, SliceData, BuilderData};
+use ton_types::{read_single_root_boc, write_boc, SliceData, BuilderData};
 
 pub fn create_test_sign_command<'a, 'b>() -> App<'a, 'b> {
     SubCommand::with_name("sign")
@@ -239,7 +238,7 @@ async fn test_deploy(matches: &ArgMatches<'_>, config: &Config) -> Result<(), St
         None => (AbiSigner::None, None),
     };
     let deploy_set = Some(DeploySet {
-        tvc: base64::encode(&tvc_bytes),
+        tvc: Some(base64::encode(&tvc_bytes)),
         workchain_id,
         initial_pubkey,
         ..Default::default()
@@ -292,7 +291,6 @@ async fn test_deploy(matches: &ArgMatches<'_>, config: &Config) -> Result<(), St
             ..Default::default()
         };
         let enc_msg = encode_internal_message(context.clone(), msg_params)
-            .await
             .map_err(|e| format!("Failed to create deploy internal message: {e}"))?;
         message = Message::construct_from_base64(&enc_msg.message).unwrap();
         if let Some(header) = message.int_header_mut() {
@@ -394,7 +392,7 @@ pub fn test_sign_command(matches: &ArgMatches<'_>, config: &Config) -> Result<()
         decode_data(data, "data")?
     } else if let Some(data) = matches.value_of("CELL") {
         let data = decode_data(data, "cell")?;
-        let cell = deserialize_tree_of_cells_inmem(Arc::new(data))
+        let cell = read_single_root_boc(&data)
             .map_err(|err| format!("Cannot deserialize tree of cells {}", err))?;
         if cell.references_count() == 0 && (cell.bit_length() % 8) == 0 {
             // sign data
@@ -434,7 +432,7 @@ pub fn test_sign_command(matches: &ArgMatches<'_>, config: &Config) -> Result<()
 pub fn test_config_command(matches: &ArgMatches<'_>, config: &Config) -> Result<(), String> {
     if let Some(encode) = matches.value_of("ENCODE") {
         let (cell, index) = serialize_config_param(&load_params(encode)?)?;
-        let result = serialize_toc(&cell);
+        let result = write_boc(&cell);
         let cell = match result {
             Ok(config_bytes) => base64::encode(config_bytes),
             Err(e) => return Err(format!("Failed to serialize json {encode}: {e}")),
@@ -446,7 +444,7 @@ pub fn test_config_command(matches: &ArgMatches<'_>, config: &Config) -> Result<
         }
     } else if let Some(decode) = matches.value_of("DECODE") {
         let bytes = std::fs::read(decode).unwrap();
-        let cell = deserialize_tree_of_cells_inmem(Arc::new(bytes))
+        let cell = read_single_root_boc(&bytes)
             .map_err(|e| format!("Failed to deserialize tree of cells {e}"))?;
         let result = if let Some(index) = matches.value_of("INDEX") {
             let index = index

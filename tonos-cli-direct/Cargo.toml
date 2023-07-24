@@ -1,0 +1,30 @@
+[package]
+name = "tonos-cli-direct"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+failure = '0.1.6'
+futures = "0.3"
+serde_json = '1.0'
+hex = '0.4.2'
+base64 = '0.13'
+tokio = { features = [ 'rt-multi-thread' ], version = '1.5.0' }
+ton_types = { git = 'https://github.com/tonlabs/ever-types.git', tag = '2.0.15' }
+ton_block = { features = ["fast_finality"], git = 'https://github.com/tonlabs/ever-block.git', tag = '1.9.84' }
+adnl = { features = [ 'client' ], git = 'https://github.com/tonlabs/ever-adnl.git', tag = '0.8.12' }
+ton_api = { git = 'https://github.com/tonlabs/ever-tl.git', package = 'ton_api', tag = '0.3.20' }
+
+[lib]
+crate-type = ["dylib"]
+
+[features]
+default = [ 'telemetry' ]
+telemetry = [ 'adnl/telemetry' ]
+
+[profile.dev]
+rpath = true
+
+[profile.release]
+rpath = true
+

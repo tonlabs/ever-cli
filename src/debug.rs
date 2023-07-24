@@ -977,7 +977,7 @@ pub async fn decode_messages(tr: &Transaction, abi: Option<String>, config: &Con
         let msg_cell = msg.serialize()
             .map_err(|e| format!("Failed to serialize out message: {}", e))?;
         ser_msg["id"] = msg_cell.repr_hash().as_hex_string().into();
-        let msg_bytes = ton_types::cells_serialization::serialize_toc(&msg_cell)
+        let msg_bytes = ton_types::write_boc(&msg_cell)
             .map_err(|e| format!("failed to encode out message: {e}"))?;
         ser_msg["Message_base64"] = base64::encode(msg_bytes).into();
         let body = &ser_msg["BodyCall"];

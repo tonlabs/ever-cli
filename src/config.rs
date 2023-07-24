@@ -15,12 +15,33 @@ use std::collections::BTreeMap;
 use clap::ArgMatches;
 use lazy_static::lazy_static;
 use regex::Regex;
-use crate::global_config_path;
-use crate::helpers::default_config_name;
+use std::env;
+use std::path::PathBuf;
 
 const TESTNET: &str = "net.evercloud.dev";
 const MAINNET: &str = "main.evercloud.dev";
 pub const LOCALNET: &str = "http://127.0.0.1/";
+const CONFIG_BASE_NAME: &str = "tonos-cli.conf.json";
+const GLOBAL_CONFIG_PATH: &str = ".tonos-cli.global.conf.json";
+pub const HD_PATH: &str = "m/44'/396'/0'/0/0";
+pub const WORD_COUNT: u8 = 12;
+
+pub fn default_config_name() -> String {
+    env::current_dir()
+        .map(|dir| {
+            dir.join(PathBuf::from(CONFIG_BASE_NAME)).to_str().unwrap().to_string()
+        })
+        .unwrap_or(CONFIG_BASE_NAME.to_string())
+}
+
+pub fn global_config_path() -> String {
+    env::current_exe()
+        .map(|mut dir| {
+            dir.set_file_name(GLOBAL_CONFIG_PATH);
+            dir.to_str().unwrap().to_string()
+        })
+        .unwrap_or(GLOBAL_CONFIG_PATH.to_string())
+}
 
 fn default_url() -> String {
     TESTNET.to_string()
@@ -74,6 +95,7 @@ fn default_config() -> Config {
 
 #[derive(Serialize, Deserialize, Clone, PartialEq)]
 pub struct Config {
+    pub link: Option<String>,
     #[serde(default = "default_url")]
     pub url: String,
     #[serde(default = "default_wc")]
@@ -141,6 +163,7 @@ pub struct FullConfig {
 impl Default for Config {
     fn default() -> Self {
         Config {
+            link: None,
             url: default_url(),
             wc: default_wc(),
             addr: None,
@@ -185,6 +208,7 @@ impl Config {
         let url = default_url();
         let endpoints = FullConfig::default_map()[&url].clone();
         Config {
+            link: None,
             url,
             wc: default_wc(),
             addr: None,
@@ -583,6 +607,21 @@ pub fn set_config(
         println!("Succeeded.");
     }
     Ok(())
+}
+
+pub fn get_server_endpoints(config: &Config) -> Vec<String> {
+    let mut cur_endpoints = match config.endpoints.len() {
+        0 => vec![config.url.clone()],
+        _ => config.endpoints.clone(),
+    };
+    cur_endpoints.iter_mut().map(|end| {
+            let mut end = end.trim_end_matches('/').to_owned();
+        if config.project_id.is_some() {
+            end.push_str("/");
+            end.push_str(&config.project_id.clone().unwrap());
+        }
+        end.to_owned()
+    }).collect::<Vec<String>>()
 }
 
 

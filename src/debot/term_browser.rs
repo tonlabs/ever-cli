@@ -87,7 +87,6 @@ impl TerminalBrowser {
                         ..Default::default()
                     },
                 )
-                .await
                 .map_err(|e| format!("{}", e))?
                 .message,
             );
@@ -176,7 +175,6 @@ impl TerminalBrowser {
                     ..Default::default()
                 }
             )
-            .await
             .map_err(|e| format!("{}", e))?
             .message;
             let result = debot.dengine.send(response_msg).await;
@@ -223,7 +221,7 @@ impl TerminalBrowser {
                     message,
                     ..Default::default()
                  },
-            ).await.map_err(|e| format!("{}", e))?;
+            ).map_err(|e| format!("{}", e))?;
             decoded.value.unwrap_or(json!({}))
         } else {
             json!({"message": message})
@@ -330,7 +328,6 @@ pub async fn run_debot_browser(
                 ton.clone(),
                 ParamsOfParse { boc: msg.clone(), ..Default::default() },
             )
-            .await
             .map_err(|e| format!("{}", e))?
             .parsed;
 

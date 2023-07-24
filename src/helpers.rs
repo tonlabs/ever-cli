@@ -10,9 +10,7 @@
  * See the License for the specific TON DEV software governing permissions and
  * limitations under the License.
  */
-use std::env;
-use std::path::PathBuf;
-use crate::config::{Config, LOCALNET};
+use crate::config::{Config, LOCALNET, HD_PATH, WORD_COUNT, get_server_endpoints};
 use crate::debug::debug_level_from_env;
 
 use std::sync::Arc;
@@ -35,29 +33,6 @@ use url::Url;
 use crate::call::parse_params;
 use crate::{FullConfig, resolve_net_name};
 use crate::replay::{CONFIG_ADDR, construct_blockchain_config};
-
-pub const HD_PATH: &str = "m/44'/396'/0'/0/0";
-pub const WORD_COUNT: u8 = 12;
-
-const CONFIG_BASE_NAME: &str = "tonos-cli.conf.json";
-const GLOBAL_CONFIG_PATH: &str = ".tonos-cli.global.conf.json";
-
-pub fn default_config_name() -> String {
-    env::current_dir()
-        .map(|dir| {
-            dir.join(PathBuf::from(CONFIG_BASE_NAME)).to_str().unwrap().to_string()
-        })
-        .unwrap_or(CONFIG_BASE_NAME.to_string())
-}
-
-pub fn global_config_path() -> String {
-    env::current_exe()
-        .map(|mut dir| {
-            dir.set_file_name(GLOBAL_CONFIG_PATH);
-            dir.to_str().unwrap().to_string()
-        })
-        .unwrap_or(GLOBAL_CONFIG_PATH.to_string())
-}
 
 struct SimpleLogger;
 
@@ -118,21 +93,6 @@ pub fn create_client_local() -> Result<TonClient, String> {
     Ok(Arc::new(cli))
 }
 
-pub fn get_server_endpoints(config: &Config) -> Vec<String> {
-    let mut cur_endpoints = match config.endpoints.len() {
-        0 => vec![config.url.clone()],
-        _ => config.endpoints.clone(),
-    };
-    cur_endpoints.iter_mut().map(|end| {
-            let mut end = end.trim_end_matches('/').to_owned();
-        if config.project_id.is_some() {
-            end.push_str("/");
-            end.push_str(&config.project_id.clone().unwrap());
-        }
-        end.to_owned()
-    }).collect::<Vec<String>>()
-}
-
 pub fn create_client(config: &Config) -> Result<TonClient, String> {
     let modified_endpoints = get_server_endpoints(config);
     if !config.is_json {
@@ -166,7 +126,7 @@ pub fn create_client(config: &Config) -> Result<TonClient, String> {
             message_retries_count: config.retries as i8,
             message_processing_timeout: 30000,
             wait_for_timeout: config.timeout,
-            out_of_sync_threshold: config.out_of_sync_threshold * 1000,
+            out_of_sync_threshold: Some(config.out_of_sync_threshold * 1000),
             access_key: config.access_key.clone(),
             ..Default::default()
         },
@@ -302,7 +262,6 @@ pub async fn decode_msg_body(
             ..Default::default()
         },
     )
-    .await
     .map_err(|e| format!("failed to decode body: {}", e))
 }
 
@@ -366,7 +325,7 @@ pub async fn calc_acc_address(
         .map_err(|e| format!("initial data is not in json: {}", e))?;
 
     let dset = DeploySet {
-        tvc: base64::encode(tvc),
+        tvc: Some(base64::encode(tvc)),
         workchain_id: Some(wc),
         initial_data: init_data_json,
         initial_pubkey: pubkey.clone(),
@@ -432,7 +391,7 @@ pub async fn print_message(ton: TonClient, message: &Value, abi: &str, is_intern
                 is_internal,
                 ..Default::default()
             },
-        ).await;
+        );
         let (name, args) = if result.is_err() {
             ("unknown".to_owned(), "{}".to_owned())
         } else {

@@ -30,7 +30,7 @@ use ton_client::{
 };
 use ton_executor::{BlockchainConfig, ExecuteParams, OrdinaryTransactionExecutor,
                    TickTockTransactionExecutor, TransactionExecutor};
-use ton_types::{BuilderData, SliceData, UInt256, serialize_tree_of_cells};
+use ton_types::{BuilderData, SliceData, UInt256, write_boc};
 use ton_vm::executor::{Engine, EngineTraceInfo};
 
 use crate::config::Config;
@@ -341,7 +341,7 @@ pub async fn replay(
         if tr.id == txnid {
             if dump_mask & DUMP_ACCOUNT != 0 {
                 let path = format!("{}-{}.boc", account_address.split(':').last().unwrap_or(""), txnid);
-                account_root.write_to_file(&path);
+                account_root.write_to_file(&path).map_err(|e| format!("Failed to write file: {}", e))?;
                 if !cli_config.is_json {
                     println!("Contract account was dumped to {}", path);
                 }
@@ -350,7 +350,7 @@ pub async fn replay(
                 let path = format!("config-{}.boc", txnid);
                 let account = config_account.serialize()
                     .map_err(|e| format!("Failed to serialize config account: {}", e))?;
-                account.write_to_file(&path);
+                account.write_to_file(&path).map_err(|e| format!("Failed to write file: {}", e))?;
                 if !cli_config.is_json {
                     println!("Config account was dumped to {}", path);
                 }
@@ -371,7 +371,7 @@ pub async fn replay(
                     .map_err(|e| format!("Failed to append config reference: {}", e))?;
                 let path = format!("config-{}-test.boc", txnid);
                 cfg.into_cell().map_err(|e| format!("Failed to finalize builder: {}", e))?
-                    .write_to_file(&path);
+                    .write_to_file(&path).map_err(|e| format!("Failed to write file: {}", e))?;
                 if !cli_config.is_json {
                     println!("Config for executor was dumped to {}", path);
                 }
@@ -498,8 +498,7 @@ pub async fn fetch_block(config: &Config, block_id: &str, filename: &str) -> ton
         let mut txns = vec!();
         account_block.transaction_iterate(|tr| {
             let cell = tr.serialize()?;
-            let mut bytes = vec!();
-            serialize_tree_of_cells(&cell, &mut bytes)?;
+            let bytes = write_boc(&cell)?;
             txns.push((cell.repr_hash().to_hex_string(), base64::encode(&bytes)));
             Ok(true)
         })?;

@@ -1,6 +1,7 @@
 use super::term_browser::input;
 use crate::crypto::load_keypair;
-use crate::helpers::{TonClient, HD_PATH};
+use crate::helpers::TonClient;
+use crate::config::HD_PATH;
 use std::io::{self};
 use ton_client::crypto::{
     register_encryption_box, remove_encryption_box,

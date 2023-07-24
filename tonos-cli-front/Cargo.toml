@@ -1,0 +1,24 @@
+[package]
+name = "tonos-cli-front"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde_derive = '1.0'
+serde_json = '1.0'
+serde = { features = [ 'derive' ], version = '1.0' }
+tokio = { features = [ 'rt-multi-thread' ], version = '1.5.0' }
+ton_client = { git = 'https://github.com/tonlabs/ever-sdk.git', tag = '1.44.0' }
+log = { features = [ 'std' ], version = '0.4' }
+regex = '1.5'
+lazy_static = '1.4'
+
+[lib]
+crate-type = ["dylib"]
+
+[profile.dev]
+rpath = true
+
+[profile.release]
+rpath = true
+

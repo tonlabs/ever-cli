@@ -635,7 +635,7 @@ async fn print_event(ton: TonClient, event: &serde_json::Value) -> Result<(), St
             is_internal: false,
             ..Default::default()
         },
-    ).await;
+    );
     let (name, args) = if result.is_err() {
         ("unknown".to_owned(), "{}".to_owned())
     } else {

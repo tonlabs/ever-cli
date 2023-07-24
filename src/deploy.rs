@@ -160,7 +160,7 @@ pub async fn prepare_deploy_message_params(
         ..Default::default()
     });
     let deploy_set = Some(DeploySet {
-        tvc: tvc_base64,
+        tvc: Some(tvc_base64),
         workchain_id: Some(wc),
         ..Default::default()
     });

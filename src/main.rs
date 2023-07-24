@@ -66,14 +66,16 @@ use crate::account::dump_accounts;
 #[cfg(feature = "sold")]
 use crate::compile::{compile_command, create_compile_command};
 
-use crate::config::{FullConfig, resolve_net_name};
+use crate::config::{FullConfig, resolve_net_name, default_config_name, global_config_path};
 use crate::getconfig::gen_update_config_message;
-use crate::helpers::{abi_from_matches_or_config, AccountSource, default_config_name,
-    global_config_path, load_abi_from_tvc, load_params, parse_lifetime,
+use crate::helpers::{abi_from_matches_or_config, AccountSource,
+    load_abi_from_tvc, load_params, parse_lifetime,
     unpack_alternative_params, wc_from_matches_or_config
 };
 use crate::message::generate_message;
 use crate::run::{run_command, run_get_method};
+use std::path::Path;
+use tonos_cli::plugins::Plugins;
 
 const DEF_MSG_LIFETIME: u32 = 30;
 const DEF_STORAGE_PERIOD: u32 = 60 * 60 * 24 * 365;
@@ -882,10 +884,16 @@ async fn main_internal() -> Result <(), String> {
                           env!("BUILD_TIME"),
                           env!("BUILD_GIT_DATE"),
                           env!("BUILD_GIT_BRANCH"));
+    let plugins = Plugins::new(Path::new("plugins").into());
+    let link_names_help = format!("Link plugin name ({})", plugins.link_names().join("|"));
     let matches = App::new("tonos_cli")
         .version(&*version)
         .author(author)
         .about("TONLabs console tool for TON")
+        .arg(Arg::with_name("LINK")
+            .help(link_names_help.as_str())
+            .long("--link")
+            .takes_value(true))
         .arg(Arg::with_name("NETWORK")
             .help("Network to connect.")
             .short("-u")
@@ -986,6 +994,10 @@ async fn command_parser(matches: &ArgMatches<'_>, is_json: bool) -> Result <(), 
         let empty : Vec<String> = Vec::new();
         config.endpoints = full_config.endpoints_map.get(&resolved_url).unwrap_or(&empty).clone();
         config.url = resolved_url;
+    }
+
+    if let Some(link_name) = matches.value_of("LINK") {
+        config.link = Some(link_name.to_string());
     }
 
     if let Some(m) = matches.subcommand_matches("callx") {
@@ -1481,6 +1493,7 @@ async fn account_command(matches: &ArgMatches<'_>, config: &Config) -> Result<()
     let tvcname = matches.value_of("DUMPTVC");
     let bocname = matches.value_of("DUMPBOC");
     let addresses = Some(formatted_list.join(", "));
+    println!("link_name: {}", config.link.clone().unwrap_or("front".to_string()));
     if !config.is_json {
         print_args!(addresses);
     }

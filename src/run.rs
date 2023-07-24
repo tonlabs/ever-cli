@@ -13,7 +13,6 @@
 
 use clap::ArgMatches;
 use serde_json::{Map, Value};
-use std::io::Cursor;
 use ton_block::{Account, Deserializable, Serializable};
 use ton_client::abi::FunctionHeader;
 use ton_client::tvm::{ExecutionOptions, ParamsOfRunGet, ParamsOfRunTvm, run_get, run_tvm};
@@ -185,7 +184,7 @@ fn prepare_execution_options(bc_config: Option<&str>) -> Result<Option<Execution
     if let Some(config) = bc_config {
         let mut bytes = std::fs::read(config)
             .map_err(|e| format!("Failed to read data from file {config}: {e}"))?;
-        let cell = ton_types::deserialize_tree_of_cells(&mut Cursor::new(&bytes))
+        let cell = ton_types::read_single_root_boc(&bytes)
             .map_err(|e| format!("Failed to deserialize {config}: {e}"))?;
         if let Ok(acc) = Account::construct_from_cell(cell.clone()) {
             let config = construct_blockchain_config(&acc)?;

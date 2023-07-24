@@ -15,59 +15,22 @@ use crate::helpers::{check_dir, create_client_verbose, json_account, print_accou
 use crate::config::Config;
 use serde_json::{json, Value};
 use ton_client::error::ClientError;
-use ton_client::net::{ParamsOfQueryCollection, query_collection, ResultOfSubscription, ParamsOfSubscribeCollection};
+use ton_client::net::{ParamsOfQueryCollection, ResultOfSubscription, ParamsOfSubscribeCollection};
 use ton_client::utils::{calc_storage_fee, ParamsOfCalcStorageFee};
 use ton_block::{Account, Deserializable, Serializable};
 use crate::decode::print_account_data;
-
-const ACCOUNT_FIELDS: &str = r#"
-    id
-    acc_type_name
-    balance(format: DEC)
-    last_paid
-    last_trans_lt
-    data
-    boc
-    code_hash
-"#;
+use tonos_cli::run_query_accounts;
 
 const DEFAULT_PATH: &str = ".";
 
-async fn query_accounts(config: &Config, addresses: Vec<String>, fields: &str) -> Result<Vec<Value>, String> {
-    let ton = create_client_verbose(&config)?;
-
-    if !config.is_json {
-        println!("Processing...");
+async fn query_accounts(config: &Config, addresses: Vec<String>) -> Result<Vec<Value>, String> {
+    let link_name = config.link.clone().unwrap_or("front".to_string());
+    let vec = run_query_accounts(&link_name, addresses)?;
+    let mut rv = Vec::new();
+    for val_str in vec {
+        rv.push(serde_json::from_str(&val_str).map_err(|e| format!("Can't parse account: {e}"))?);
     }
-
-    let mut res = vec![];
-    let mut it = 0;
-    loop {
-        if it >= addresses.len() {
-            break;
-        }
-        let mut filter = json!({ "id": { "eq": addresses[it] } });
-        let mut cnt = 1;
-        for address in addresses.iter().skip(it).take(50) {
-            cnt += 1;
-            filter = json!({ "id": { "eq": address },
-                "OR": filter
-            });
-        }
-        it += cnt;
-        let mut query_result = query_collection(
-            ton.clone(),
-            ParamsOfQueryCollection {
-                collection: "accounts".to_owned(),
-                filter: Some(filter),
-                result: fields.to_string(),
-                limit: Some(cnt as u32),
-                ..Default::default()
-            },
-        ).await.map_err(|e| format!("failed to query account info: {}", e))?;
-        res.append(query_result.result.as_mut());
-    }
-    Ok(res)
+    Ok(rv)
 }
 
 pub async fn get_account(config: &Config, addresses: Vec<String>, dumptvc: Option<&str>, dumpboc: Option<&str>, is_boc: bool) -> Result<(), String> {
@@ -86,7 +49,7 @@ pub async fn get_account(config: &Config, addresses: Vec<String>, dumptvc: Optio
         }
         return Ok(());
     }
-    let accounts = query_accounts(&config, addresses.clone(), ACCOUNT_FIELDS).await?;
+    let accounts = query_accounts(&config, addresses.clone()).await?;
     if !config.is_json {
         println!("Succeeded.");
     }
@@ -265,7 +228,7 @@ pub async fn calc_storage(config: &Config, addr: &str, period: u32) -> Result<()
 }
 
 pub async fn dump_accounts(config: &Config, addresses: Vec<String>, path: Option<&str>) -> Result<(), String> {
-    let accounts = query_accounts(&config, addresses.clone(), "id boc").await?;
+    let accounts = query_accounts(&config, addresses.clone()).await?;
     let mut addresses = addresses.clone();
     check_dir(path.unwrap_or(""))?;
     for account in accounts.iter() {

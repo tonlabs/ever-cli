@@ -47,7 +47,6 @@ async fn decode_call_parameters(ton: TonClient, msg: &EncodedMessage, abi: Abi) 
             ..Default::default()
         },
     )
-    .await
     .map_err(|e| format!("couldn't decode message: {}", e))?;
 
     Ok((
@@ -119,7 +118,7 @@ pub async fn emulate_locally(
             let addr = ton_block::MsgAddressInt::from_str(addr)
                 .map_err(|e| format!("couldn't decode address: {}", e))?;
             state = base64::encode(
-                &ton_types::cells_serialization::serialize_toc(
+                &ton_types::write_boc(
                     &Account::with_address(addr)
                         .serialize()
                         .map_err(|e| format!("couldn't create dummy account for deploy emulation: {}", e))?
