@@ -16,7 +16,7 @@ license = 'Apache-2.0'
 name = 'tonos-cli'
 readme = 'README.md'
 repository = 'https://github.com/tonlabs/tonos-cli'
-version = '0.35.7'
+version = '0.35.8'
 default-run = 'tonos-cli'
 
 [features]
