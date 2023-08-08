@@ -119,7 +119,7 @@ pub async fn emulate_locally(
             let addr = ton_block::MsgAddressInt::from_str(addr)
                 .map_err(|e| format!("couldn't decode address: {}", e))?;
             state = base64::encode(
-                &ton_types::write_boc(
+                ton_types::write_boc(
                     &Account::with_address(addr)
                         .serialize()
                         .map_err(|e| format!("couldn't create dummy account for deploy emulation: {}", e))?
@@ -186,7 +186,6 @@ pub async fn send_message_and_wait(
             message: msg.clone(),
             abi: abi.clone(),
             send_events: false,
-            ..Default::default()
         },
         callback,
     ).await
@@ -232,7 +231,6 @@ pub async fn process_message(
             ParamsOfProcessMessage {
                 message_encode_params: msg.clone(),
                 send_events: true,
-                ..Default::default()
             },
             callback,
         ).await
@@ -242,7 +240,6 @@ pub async fn process_message(
             ParamsOfProcessMessage {
                 message_encode_params: msg.clone(),
                 send_events: true,
-                ..Default::default()
             },
             |_| { async move {} },
         ).await
@@ -260,7 +257,7 @@ pub async fn call_contract_with_result(
     keys: Option<String>,
     is_fee: bool,
 ) -> Result<Value, String> {
-    let ton = if config.debug_fail != "None".to_string() {
+    let ton = if config.debug_fail != "None" {
         init_debug_logger(&format!("call_{}_{}.log", addr, method))?;
         create_client(config)?
     } else {
@@ -293,7 +290,7 @@ pub async fn call_contract_with_client(
     let needs_encoded_msg = is_fee ||
         config.async_call ||
         config.local_run ||
-        config.debug_fail != "None".to_string();
+        config.debug_fail != "None";
 
     let message = if needs_encoded_msg {
         let msg = encode_message(ton.clone(), msg_params.clone()).await
@@ -335,7 +332,7 @@ pub async fn call_contract_with_client(
                 ..DebugParams::new(config, bc_config)
             };
             debug_error(&e, debug_params).await?;
-            return Err(format!("{:#}", e));
+            Err(format!("{:#}", e))
         }
     }
 }
@@ -370,7 +367,7 @@ pub async fn call_contract(
 
 
 pub async fn call_contract_with_msg(config: &Config, str_msg: String, abi_path: &str) -> Result<(), String> {
-    let ton = create_client_verbose(&config)?;
+    let ton = create_client_verbose(config)?;
     let abi = load_abi(abi_path, config).await?;
 
     let (msg, _) = unpack_message(&str_msg)?;

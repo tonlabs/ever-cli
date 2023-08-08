@@ -19,26 +19,26 @@ fn main() {
     let mut build_time = String::from("Unknown");
 
     let branch = Command::new("git")
-        .args(&["rev-parse", "--abbrev-ref", "HEAD"])
+        .args(["rev-parse", "--abbrev-ref", "HEAD"])
         .output();
 
     if let Ok(branch) = branch {
         git_branch = String::from_utf8(branch.stdout).unwrap_or_else(|_| "Unknown".to_string());
     }
 
-    let last = Command::new("git").args(&["rev-parse", "HEAD"]).output();
+    let last = Command::new("git").args(["rev-parse", "HEAD"]).output();
     if let Ok(last) = last {
         git_commit = String::from_utf8(last.stdout).unwrap_or_else(|_| "Unknown".to_string());
     }
 
     let time = Command::new("git")
-        .args(&["log", "-1", "--date=iso", "--pretty=format:%cd"])
+        .args(["log", "-1", "--date=iso", "--pretty=format:%cd"])
         .output();
     if let Ok(time) = time {
         commit_date = String::from_utf8(time.stdout).unwrap_or_else(|_| "Unknown".to_string());
     }
 
-    let b_time = Command::new("date").args(&["+%Y-%m-%d %T %z"]).output();
+    let b_time = Command::new("date").args(["+%Y-%m-%d %T %z"]).output();
     if let Ok(b_time) = b_time {
         build_time = String::from_utf8(b_time.stdout).unwrap_or_else(|_| "Unknown".to_string());
     }

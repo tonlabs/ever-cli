@@ -43,7 +43,6 @@ pub fn gen_seed_phrase() -> Result<String, String> {
         ParamsOfMnemonicFromRandom {
             dictionary: Some(MnemonicDictionary::English),
             word_count: Some(WORD_COUNT),
-            ..Default::default()
         },
     )
     .map_err(|e| format!("{}", e))
@@ -58,7 +57,6 @@ pub fn generate_keypair_from_mnemonic(mnemonic: &str) -> Result<KeyPair, String>
             dictionary: Some(MnemonicDictionary::English),
             word_count: Some(WORD_COUNT),
             phrase: mnemonic.to_string(),
-            ..Default::default()
         },
     ).map_err(|e| format!("{}", e))?;
 
@@ -67,7 +65,6 @@ pub fn generate_keypair_from_mnemonic(mnemonic: &str) -> Result<KeyPair, String>
         ParamsOfHDKeyDeriveFromXPrvPath {
             xprv: hdk_master.xprv,
             path: HD_PATH.to_string(),
-            ..Default::default()
         },
     ).map_err(|e| format!("{}", e))?;
 
@@ -75,7 +72,6 @@ pub fn generate_keypair_from_mnemonic(mnemonic: &str) -> Result<KeyPair, String>
         client.clone(),
         ParamsOfHDKeySecretFromXPrv {
             xprv: hdk_root.xprv,
-            ..Default::default()
         },
     ).map_err(|e| format!("{}", e))?;
 
@@ -83,7 +79,6 @@ pub fn generate_keypair_from_mnemonic(mnemonic: &str) -> Result<KeyPair, String>
         client,
         ParamsOfNaclSignKeyPairFromSecret {
             secret: secret.secret,
-            ..Default::default()
         },
     ).map_err(|e| format!("failed to get KeyPair from secret key: {}", e))?;
 
@@ -102,7 +97,6 @@ pub fn generate_keypair_from_secret(secret: String) -> Result<KeyPair, String> {
         client,
         ParamsOfNaclSignKeyPairFromSecret {
             secret,
-            ..Default::default()
         },
     ).map_err(|e| format!("failed to get KeyPair from secret key: {}", e))?;
     // special case if secret contains public key too.
@@ -165,7 +159,7 @@ pub fn generate_keypair(keys_path: Option<&str>, mnemonic: Option<&str>, config:
         }
     };
 
-    let keys = if mnemonic.contains(" ") {
+    let keys = if mnemonic.contains(' ') {
         generate_keypair_from_mnemonic(&mnemonic)?
     } else {
         generate_keypair_from_secret(mnemonic)?

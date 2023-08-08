@@ -16,7 +16,7 @@ extern crate core;
 use std::collections::BTreeMap;
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
-use ton_client::abi::{AbiContract};
+use ton_client::abi::AbiContract;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct ContractData {
@@ -72,13 +72,11 @@ fn print_paths(prefix: &str) {
         return;
     }
     let mut saved_path: Vec<PathBuf> = vec![];
-    for path in paths.unwrap() {
-        if let Ok(path) = path {
-            let path = path.path();
-            let path_str = path.to_str().unwrap();
-            if path_str.starts_with(prefix) {
-                saved_path.push(path);
-            }
+    for path in paths.unwrap().flatten() {
+        let path = path.path();
+        let path_str = path.to_str().unwrap();
+        if path_str.starts_with(prefix) {
+            saved_path.push(path);
         }
     }
     if saved_path.len() == 1 && saved_path[0].is_dir() {

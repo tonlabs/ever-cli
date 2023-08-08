@@ -5,6 +5,7 @@ use std::default::Default;
 fn default_init_method() -> String { "start".to_string() }
 fn default_mandatory() -> bool { false }
 
+#[allow(clippy::enum_variant_names)]
 #[derive(Deserialize, Clone, PartialEq)]
 pub enum ApproveKind {
     ApproveOnChainCall,

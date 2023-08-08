@@ -84,7 +84,7 @@ impl SigningBoxInput {
                 self.handles.write().await.push(signing_box);
                 Ok((answer_id, json!({ "handle": handle.0})))
             }
-            Err(e) => return Err(format!("{:?}", e)),
+            Err(e) => Err(format!("{:?}", e)),
             Ok(handle) => {
                 Ok((answer_id, json!({ "handle": handle}) ))
             }

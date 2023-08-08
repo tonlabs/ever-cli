@@ -50,7 +50,7 @@ impl TerminalEncryptionBox {
             let mut writer = io::stdout();
             let enter_str = "enter seed phrase or path to keypair file";
             let value = input(enter_str, &mut reader, &mut writer);
-            let pair = load_keypair(&value).map_err(|e| e)?;
+            let pair = load_keypair(&value)?;
             key = format!("{:064}", pair.secret);
         }
 

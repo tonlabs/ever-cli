@@ -29,18 +29,18 @@ use crate::replay::construct_blockchain_config;
 pub async fn run_command(matches: &ArgMatches<'_>, full_config: &FullConfig, is_alternative: bool) -> Result<(), String> {
     let config = &full_config.config;
     let (address, abi_path) = if is_alternative {
-        let (address,abi, _) = contract_data_from_matches_or_config_alias(matches, full_config)?;
-        (address.unwrap(), abi.unwrap())
+        let contract_data = contract_data_from_matches_or_config_alias(matches, full_config)?;
+        (contract_data.address.unwrap(), contract_data.abi.unwrap())
     } else {
         (matches.value_of("ADDRESS").unwrap().to_string(),
-        abi_from_matches_or_config(matches, &config)?)
+        abi_from_matches_or_config(matches, config)?)
     };
     let account_source = if matches.is_present("TVC") {
-        AccountSource::TVC
+        AccountSource::Tvc
     } else if matches.is_present("BOC") {
-        AccountSource::BOC
+        AccountSource::Boc
     } else {
-        AccountSource::NETWORK
+        AccountSource::Network
     };
 
     let method = if is_alternative {
@@ -50,9 +50,9 @@ pub async fn run_command(matches: &ArgMatches<'_>, full_config: &FullConfig, is_
         matches.value_of("METHOD").unwrap()
     };
     let trace_path;
-    let ton_client = if account_source == AccountSource::NETWORK {
+    let ton_client = if account_source == AccountSource::Network {
         trace_path = format!("run_{}_{}.log", address, method);
-        create_client(&config)?
+        create_client(config)?
     } else {
         trace_path = "trace.log".to_string();
         create_client_local()?
@@ -62,12 +62,12 @@ pub async fn run_command(matches: &ArgMatches<'_>, full_config: &FullConfig, is_
         &account_source,
         &address,
         Some(ton_client.clone()),
-        &config
+        config
     ).await?;
     let address = match account_source {
-        AccountSource::NETWORK => address,
-        AccountSource::BOC => account.get_addr().unwrap().to_string(),
-        AccountSource::TVC => std::iter::repeat("0").take(64).collect()
+        AccountSource::Network => address,
+        AccountSource::Boc => account.get_addr().unwrap().to_string(),
+        AccountSource::Tvc => "0".repeat(64),
     };
     run(matches, config, Some(ton_client), &address, account_boc, abi_path, is_alternative, trace_path).await
 }
@@ -117,7 +117,7 @@ async fn run(
 
     let msg = prepare_message(
         ton_client.clone(),
-        &address,
+        address,
         abi.clone(),
         method,
         &params,
@@ -126,7 +126,7 @@ async fn run(
         config.is_json,
     ).await?;
 
-    let execution_options = prepare_execution_options(bc_config.clone())?;
+    let execution_options = prepare_execution_options(bc_config)?;
     let result = run_tvm(
         ton_client.clone(),
         ParamsOfRunTvm {
@@ -198,8 +198,8 @@ fn prepare_execution_options(bc_config: Option<&str>) -> Result<Option<Execution
 }
 
 pub async fn run_get_method(config: &Config, addr: &str, method: &str, params: Option<String>, source_type: AccountSource, bc_config: Option<&str>) -> Result<(), String> {
-    let ton = if source_type == AccountSource::NETWORK {
-        create_client_verbose(&config)?
+    let ton = if source_type == AccountSource::Network {
+        create_client_verbose(config)?
     } else {
         create_client_local()?
     };
@@ -224,7 +224,7 @@ pub async fn run_get_method(config: &Config, addr: &str, method: &str, params: O
             ..Default::default()
         },
     ).await
-        .map_err(|e| format!("run failed: {}", e.to_string()))?
+        .map_err(|e| format!("run failed: {}", e))?
         .output;
 
     if !config.is_json {
@@ -234,10 +234,8 @@ pub async fn run_get_method(config: &Config, addr: &str, method: &str, params: O
         let mut res = Map::new();
         match result {
             Value::Array(array) => {
-                let mut i = 0;
-                for val in array.iter() {
+                for (i, val) in array.iter().enumerate() {
                     res.insert(format!("value{}", i), val.to_owned());
-                    i = 1 + i;
                 }
             },
             _ => {
