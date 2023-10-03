@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.35.8
+
+### Fixes
+- Fixed clippy warnings
+
 ## 0.35.7
 
 ### Bug fixes

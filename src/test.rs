@@ -253,7 +253,6 @@ async fn test_deploy(matches: &ArgMatches<'_>, config: &Config) -> Result<(), St
         function_name,
         input: Some(params),
         header,
-        ..Default::default()
     });
     let mut account;
     let mut message;
@@ -345,7 +344,7 @@ async fn test_ticktock(matches: &ArgMatches<'_>, config: &Config) -> Result<(), 
     let trace_path = matches.value_of("LOG_PATH").unwrap_or(DEFAULT_TRACE_PATH);
     let is_tock = matches.is_present("IS_TOCK");
 
-    let mut account = Account::construct_from_file(&input)
+    let mut account = Account::construct_from_file(input)
         .map_err(|e| format!("Failed to load Account from the file {input}: {e}"))?;
     if let Some(state_init) = account.state_init_mut().as_mut() {
         state_init.set_special(TickTock::with_values(true, true));
@@ -379,7 +378,7 @@ async fn test_ticktock(matches: &ArgMatches<'_>, config: &Config) -> Result<(), 
     let account = Account::construct_from_cell(account_root)
         .map_err(|e| format!("Failed to construct Account after transaction: {e}"))?;
     account
-        .write_to_file(&input)
+        .write_to_file(input)
         .map_err(|e| format!("Failed write to file {:?}: {e}", input))?;
     if !config.is_json {
         println!("Account written to {:?}", input);
@@ -404,9 +403,9 @@ pub fn test_sign_command(matches: &ArgMatches<'_>, config: &Config) -> Result<()
         return Err("nor data neither cell parameter".to_string());
     };
     let pair = match matches.value_of("KEYS") {
-        Some(keys) => crypto::load_keypair(&keys)?,
+        Some(keys) => crypto::load_keypair(keys)?,
         None => match &config.keys_path {
-            Some(keys) => crypto::load_keypair(&keys)?,
+            Some(keys) => crypto::load_keypair(keys)?,
             None => return Err("nor signing keys in the params neither in the config".to_string()),
         },
     };

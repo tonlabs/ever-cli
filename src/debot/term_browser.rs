@@ -326,7 +326,7 @@ pub async fn run_debot_browser(
         while let Some(msg) = next_msg {
             let parsed = parse_message(
                 ton.clone(),
-                ParamsOfParse { boc: msg.clone(), ..Default::default() },
+                ParamsOfParse { boc: msg.clone() },
             )
             .map_err(|e| format!("{}", e))?
             .parsed;

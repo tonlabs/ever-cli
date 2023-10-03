@@ -207,7 +207,7 @@ impl CallArgs {
         let value = convert::convert_token(value)?;
         let comment = matches.value_of("PURPOSE").map(|s| s.to_owned());
         let body = if let Some(ref txt) = comment {
-            encode_transfer_body(&txt).await?
+            encode_transfer_body(txt).await?
         } else {
             "".to_owned()
         };
@@ -250,22 +250,17 @@ impl CallArgs {
             } else {
                 SAFEMULTISIG_V2_LINK
             }
+        } else if is_setcode {
+            SETCODEMULTISIG_LINK
         } else {
-            if is_setcode {
-                SETCODEMULTISIG_LINK
-            } else {
-                SAFEMULTISIG_LINK
-            }
+            SAFEMULTISIG_LINK
         };
 
         let image = load_file_with_url(target, 30000).await?;
 
         let owners = matches.value_of("OWNERS").map(|owners| {
             owners
-                .replace('[', "")
-                .replace(']', "")
-                .replace('\"', "")
-                .replace('\'', "")
+                .replace(['[', ']', '\"', '\''], "")
                 .replace("0x", "")
                 .split(',')
                 .map(|o| format!("0x{}", o))
@@ -320,7 +315,7 @@ impl MultisigArgs {
             .ok_or("sign key is not defined".to_string())?;
         let v2 = matches.is_present("V2");
 
-        let addr = load_ton_address(&address, &config)?;
+        let addr = load_ton_address(&address, config)?;
         let mut abi = serde_json::from_str::<AbiContract>(MSIG_ABI).unwrap_or_default();
         if v2 {
             abi.version = Some("2.3".to_owned());
@@ -374,7 +369,7 @@ impl MultisigArgs {
         &self.keys
     }
     pub fn image(&self) -> Option<&[u8]> {
-        self.call_args.image.as_ref().map(|v| v.as_slice())
+        self.call_args.image.as_deref()
     }
     pub async fn execute(self, config: &Config) -> Result<serde_json::Value, String> {
         call::call_contract_with_result(
@@ -528,7 +523,7 @@ async fn multisig_deploy_command(matches: &ArgMatches<'_>, config: &Config) -> R
         println!("Wallet address: {}", address);
     }
 
-    let ton = create_client_verbose(&config)?;
+    let ton = create_client_verbose(config)?;
 
     if let Some(value) = matches.value_of("VALUE") {
         let params = format!(r#"{{"dest":"{}","amount":"{}"}}"#, address, value);
