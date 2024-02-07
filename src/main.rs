@@ -170,7 +170,7 @@ async fn main_internal() -> Result <(), String> {
     let alias_arg_long = Arg::with_name("ALIAS")
         .long("--alias")
         .takes_value(true)
-        .help("Saves contract address and abi to the aliases list to be able to call this contract with alias instaed of address.");
+        .help("Saves contract address and abi to the aliases list to be able to call this contract with alias instead of address.");
 
     let deployx_cmd = SubCommand::with_name("deployx")
         .about("Deploys a smart contract to the blockchain (alternative syntax).")
